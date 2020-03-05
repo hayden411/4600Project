@@ -1,0 +1,9 @@
+Scenario 1 
+ A real estate agent needs to send out email that have houses in it for her customers. She will open the web scrapping application and enter in the zip code of the desired region that they are trying to scrape. She will also enter in any information that her client has specified like number of bedrooms or baths, price range, etc. She can then have the scraper save all the houses it found into a file and she can email the file to her clients so they can look at them. 
+
+Scenario 2 
+  A data scientist is looking to collect real estate data for a certain area every month to look for changes. He will open the web scraping application to gather real estate data from the desired region. To monitor changes in price and see if there is a correlation between an increase in price and other features that the house has. He can save the houses and compare month to month or the changes over years. With using statistics, he would be able to predict future values of the homes. 
+Scenario 3 
+ A real estate investor who doesn’t have the time to spend looking up houses and would also like to look at what houses are renting for. He can use the web scrapper to gather information about homes or apartments for rent in an area. He can use the information he collected to better make an investment that will have the highest yield. Thus, decreasing the chance of losing money.         
+
+
