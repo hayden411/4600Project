@@ -65,25 +65,73 @@ namespace _4600Final
                 .Where(node => node.GetAttributeValue("class", "")
                 .Contains("card-details-stats")).ToList();
 
-            GetHouseData(htmlDocument);
+            //list of house specs
+            var numOfBeds = htmlDocument.DocumentNode.Descendants("p")
+                 .Where(node => node.GetAttributeValue("class", "")
+                 .Equals("card-details-stat")).ToList();
+
+            GetHouseData(htmlDocument, houses, numOfBeds);
         }
 
-
-        private static void GetHouseData(HtmlDocument htmlDocument)
+        private static void GetHouseData(HtmlDocument htmlDocument, List<HtmlNode> houses, List<HtmlNode> numOfBeds)
         {
-            var ProductHtmles = htmlDocument.DocumentNode.SelectNodes("//*[@id='__layout']/div/div[2]/main/div/section[2]/div[2]/div/div[1]").FirstOrDefault().InnerText.Replace(" ", "");
 
-            WriteDataToFile(ProductHtmles);
+            List<House> listOfHomes = new List<House>();
+            int j = 1;
+
+            foreach (var homes in houses)
+            {
+                House home = new House();
+
+                //address
+                home.address = (homes.Descendants("h5")
+                     .Where(node => node.GetAttributeValue("class", "")
+                     .Equals("card-address-street")).FirstOrDefault().InnerText.Trim());
+
+                //County
+                home.County = (homes.Descendants("h6")
+                    .Where(node => node.GetAttributeValue("class", "")
+                    .Equals("card-address-location")).FirstOrDefault().InnerText.Trim());
+
+                //price
+                home.price = (homes.Descendants("h4")
+                    .Where(node => node.GetAttributeValue("class", "")
+                    .Equals("price")).FirstOrDefault().InnerText.Trim());
+
+                getList(htmlDocument, numOfBeds, j, home);
+                j++;
+
+                listOfHomes.Add(home);
+
+            }
+
+            WriteDataToFile(listOfHomes);
 
         }
 
-        private static void WriteDataToFile(string ProductHtmles)
+        private static void getList(HtmlDocument htmlDocument, List<HtmlNode> numOfBeds, int j, House home)
+        {
+            home.numberOfBeds = (htmlDocument.DocumentNode.SelectNodes("//*[@id='__layout']/div/div[2]/main/div/section[2]/div[2]/div/div[1]/div[" + j + "]/div/div[2]/div[2]/p[1]").FirstOrDefault().InnerText.Trim());
+            home.numberOfBaths = (htmlDocument.DocumentNode.SelectNodes("//*[@id='__layout']/div/div[2]/main/div/section[2]/div[2]/div/div[1]/div[" + j + "]/div/div[2]/div[2]/p[2]").FirstOrDefault().InnerText.Trim());
+            home.sqft = (htmlDocument.DocumentNode.SelectNodes("//*[@id='__layout']/div/div[2]/main/div/section[2]/div[2]/div/div[1]/div[" + j + "]/div/div[2]/div[2]/p[3]").FirstOrDefault().InnerText.Trim());
+        }
+
+        private static void WriteDataToFile(List<House> listOfHomes)
         {
             var docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             using (StreamWriter outputFile = new StreamWriter(System.IO.Path.Combine(docPath, county + ".txt")))
 
             {
-                outputFile.WriteLine(ProductHtmles);
+               // outputFile.WriteLine(ProductHtmles);
+                foreach (House home in listOfHomes)
+                {
+                    outputFile.WriteLine(home.address);
+                    outputFile.WriteLine(home.price);
+                    outputFile.WriteLine(home.County);
+                    outputFile.WriteLine(home.numberOfBeds);
+                    outputFile.WriteLine(home.numberOfBaths);
+                    outputFile.WriteLine(home.sqft);
+                }
             }
         }
 
@@ -92,7 +140,6 @@ namespace _4600Final
             url = "https://www.remax.com/homes-for-sale/TN/Clarksville/city/4715160?filters={%22place%22:{%22lat%22:36.560306,%22lon%22:-87.346454,%22city%22:%22Clarksville%22,%22state%22:%22TN%22,%22placename%22:%22Clarksville,%20TN%22,%22placeType%22:%22city%22,%22placeId%22:%224715160%22,%22areaSquareMiles%22:98.05},%22locationRect%22:{%22minLat%22:36.641767,%22maxLat%22:36.478845,%22minLon%22:-87.482243,%22maxLon%22:-87.210666},%22bPropertyType%22:[%22Single%20Family%22,%22Condo/Townhome%22,%22Mobile%20Home%22,%22Multi-Family%22,%22Rental%22,%22Farm%22,%22Land%22],%22bStatus%22:[%22For%20Sale%22,%22Under%20Contract%22],%22zoom%22:11,%22center%22:{%22lat%22:36.560348944929686,%22lng%22:-87.34645450000001},%22city%22:[%22Clarksville%22],%22State%22:[%22TN%22]}";
             county = "Clarksville";
             GetHtml();
-
         }
 
         private void ListBoxItem_Cleveland(object sender, RoutedEventArgs e)
